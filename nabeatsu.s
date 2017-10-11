@@ -35,8 +35,10 @@ _start:                         ; メインのポイント
 
         loop _loop              ; ループバック
 
+    ; 後処理
     pop   rbp                   ; スタックを戻す
 
+    ; プロセス終了
     mov   rax, 1                ; sys_exit
     mov   rbx, 0                ; 終了ステータスコード
     int   0x80                  ; システムコール
