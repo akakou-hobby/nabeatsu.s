@@ -1,16 +1,42 @@
-section  .data                  ; データセクションの定義
-message  db 'Hello, World', 0x0a
-length   equ $ -message         ; 文字列の長さ
-section  .text
-global   _start                 ; エントリーポイント
+; 初期設定
+extern	printf              ; printf関数を持ってくる
 
-_start:
-mov     rcx, message            ; 文字列の先頭アドレス
-mov     rdx, length             ; 文字列の長さ
-mov     rax, 4                  ; 出力(sys_write)
-mov     rbx, 1                  ; ファイルハンドル(1 = 標準出力)
-int     0x80                    ; システムコール
-loop _start                     ; スタートに戻る
-mov     rax, 1                  ; sys_exit
-mov     rbx, 0                  ; 終了ステータスコード
-int     0x80                    ; システムコール
+; データセクション
+section .data
+    fmt:    db "%d", 10, 0	; printfで使うフォーマット
+
+; コードセクション
+section .text
+        global _start       ; _startを指名
+
+
+; スタート
+_start:				              ; メインのポイント
+        ; 必要な値の代入
+        push  rbp		        ; スタックフレームのセット
+        mov   rdx, 1        ; カウントの初期化
+
+        ; 100回ループする
+        mov rcx, 100        ; ループ回数の指定
+        _loop:
+            ; レジスタの値をスタックに移動
+            push  rcx           ; rcxをスタックに置く
+            push  rdx           ; rdxをスタックに置く
+            ; printfに使うレジスタの値を指定のレジスタに移動
+            mov	  rdi, fmt	    ; printfのフォーマットをレジスタに置く
+            mov	  rsi, rdx      ; 表示する値を指定のレジスタに置く
+            mov	  rax, 0		    ; わからない → 消すとセグフォする
+
+            call  printf	    	; printfを呼ぶ
+            ; スタックの値をレジスタに戻す
+            pop   rdx           ; rdxをスタックから持ってくる
+            pop   rcx           ; rcxをスタックから持ってくる
+            add   rdx, 1        ; rdxに１加算
+
+            loop _loop          ; ループバック
+
+        pop	  rbp		        ; スタックを戻す
+
+        mov     rax, 1      ; sys_exit
+        mov     rbx, 0      ; 終了ステータスコード
+        int     0x80        ; システムコール

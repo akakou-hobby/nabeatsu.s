@@ -1,2 +1,2 @@
 nasm -f elf64 nabeatsu.s
-ld -s nabeatsu.o
+gcc nabeatsu.o -nostartfiles -no-pie
