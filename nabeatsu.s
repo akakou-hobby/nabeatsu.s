@@ -10,6 +10,7 @@ mov     rdx, length             ; 文字列の長さ
 mov     rax, 4                  ; 出力(sys_write)
 mov     rbx, 1                  ; ファイルハンドル(1 = 標準出力)
 int     0x80                    ; システムコール
+loop _start                     ; スタートに戻る
 mov     rax, 1                  ; sys_exit
 mov     rbx, 0                  ; 終了ステータスコード
 int     0x80                    ; システムコール
