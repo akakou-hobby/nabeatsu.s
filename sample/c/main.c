@@ -6,17 +6,20 @@
 int is_bokeru_number(int value) {
   int tmp;
 
-  // 3の倍数であるか
+  /* 3の倍数であるか */
   if (value % 3 == 0) {
     return 1;
   }
 
-  // 3のつく文字であるか
+  /* 3のつく文字であるか */
   while (value != 0) {
+    // value の下位1桁を tmp に代入して3かを調べる。
     tmp = value % 10;
     if (tmp == 3) {
       return 1;
     }
+    // value の下位一桁を調べた後、10 で割って
+    // 次のループで別の桁が取り出されるようにする
     value /= 10;
   }
 
@@ -26,7 +29,7 @@ int is_bokeru_number(int value) {
 int main() {
   int count;
 
-  // カウントしていく
+  /* カウントしていく */
   for (count = 1; count <= MAX; count++) {
     if (is_bokeru_number(count)) {
       // ボケる方の出力
