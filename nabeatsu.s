@@ -16,13 +16,37 @@ _start:                                     ; メインのポイント
     mov r12, 1                               ; カウントの初期化
 
                                             ; 100回ループする
-    mov rcx, 99                            ; ループ回数の指定
                                             ; 数値とボケの表示
     mov r13, 1                               ; 00110010 => 32
 
-SET_FORMAT:
-    mov rsp, message + 0x17
-    mov rbp, message
+CHECK_THREE_MULTIPLE:
+    mov rdx, 0                            ; 除算 r12÷3(rbx)=rax...rdx
+    mov rax, r12
+    mov rbx, 3
+    div rbx
+
+    cmp rdx, 0                            ; 除算のあまりと0を比較し
+    je SET_BOKE_FMT                  ; 0ならprint_abnomalにジャンプ
+
+    mov r9,  r12
+
+CHECK_IN_THREE:
+    mov rdx, 0                            ; 除算 r9÷10(rbx)=rax...rdx
+    mov rax, r9
+    mov rbx, 10
+    div rbx
+
+    mov r9, rax                           ; 次のループで10で割られた後の数値をかけるようにする
+
+    cmp rdx, 3                            ; 除算のあまりと3を比較し
+    je SET_BOKE_FMT                  ; 0ならprint_abnomalにジャンプ
+    cmp rax, 0                            ; 除算のあまりと0を比較し
+    jne CHECK_IN_THREE                   ; 0ならprint_abnomalにジャンプ
+
+
+SET_NOMAL_FORMAT:
+    mov rsp, normal_message + 0x11
+    mov rbp, normal_message
     mov rax, r13
 
 SET_FORMAT_LOOP:
@@ -36,7 +60,7 @@ SET_FORMAT_LOOP:
 
 PRINT:
     mov r14, rcx
-    mov rcx, message                        ;メッセージ
+    mov rcx, rbp                        ;メッセージ
     mov rdx, 17                             ;メッセージの長さ
     mov rbx, 1                              ;標準出力を指定
     mov rax, 4                              ;システムコール番号 (sys_write)
@@ -57,7 +81,8 @@ CARRY_UP:
     add r13, 6
 
 LOOP_BACK:
-    loop SET_FORMAT
+    cmp r12, 99
+    jne CHECK_THREE_MULTIPLE
 
 ; 後処理
 FIN:
@@ -67,7 +92,15 @@ FIN:
     int 0x80                                ; システムコール
 
 
+SET_BOKE_FMT:
+    mov rsp, boke_message + 0x17
+    mov rbp, boke_message
+    mov rax, r13
+
+    jmp SET_FORMAT_LOOP
 
 section  .data                  ; データセクションの定義
-    message  db 0xA, '(BOKE)'
-    times 9 db 0x00
+    boke_message  db 0xA, "(BOKE)"
+    times 18 db 0x00
+    normal_message db 0xA, ""
+    times 18 db 0x00
