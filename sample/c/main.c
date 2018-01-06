@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define MAX 100000
+#define MAX 1000000
 
 /* ナベアツでボケるかを計算 */
 int is_bokeru_number(int value) {
