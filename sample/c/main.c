@@ -33,10 +33,10 @@ int main() {
   for (count = 1; count <= MAX; count++) {
     if (is_bokeru_number(count)) {
       // ボケる方の出力
-      printf("%d（ ＾ω＾）\n", count);
+      printf("      %8d\n", count);
     } else {
       // ボケない方の出力
-      printf("%d\n", count);
+      printf("(BOKE)%8d\n", count);
     }
   }
 }

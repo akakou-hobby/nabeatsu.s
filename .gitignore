@@ -1,7 +1,9 @@
 # 中間ファイル
 *.o
+
 # 実行ファイル
 a.out
+nabeatsu
 
 # GDBのファイル
 peda*
