@@ -7,5 +7,5 @@ run: a.out
 time: a.out
 	chmod +x ./a.out && time ./a.out
 
-clean:
+clean a.out:
 	rm a.out
