@@ -45,22 +45,23 @@ CHECK_IN_THREE:
 
 
 SET_NOMAL_FORMAT:
-    mov rsp, normal_message + 0x11
     mov rbp, normal_message
     mov rax, r13
+    mov r15, 15
+    add r15, rbp
 
 SET_FORMAT_LOOP:
-    inc r8
+    dec r15
     mov rbx, 0xF
     and rbx, rax
     add rbx, 0x30
-    push rbx
+    mov [r15], bl
     shr rax, 4
     jnz SET_FORMAT_LOOP
 
 PRINT:
     mov r14, rcx
-    mov rcx, rbp                        ;メッセージ
+    mov rcx, rbp                            ;メッセージ
     mov rdx, 17                             ;メッセージの長さ
     mov rbx, 1                              ;標準出力を指定
     mov rax, 4                              ;システムコール番号 (sys_write)
@@ -71,17 +72,29 @@ PRINT:
 COUNT:
     inc r12
     inc r13
-    mov rax, r13
-    and rax, 0xF
-    cmp rax, 0xA
-
-    jne LOOP_BACK
+    mov r9, r13
+    mov r11, 0xF
+    xor r8, r8
 
 CARRY_UP:
-    add r13, 6
+    inc r8
+    cmp r8, 9
+    je LOOP_BACK
+
+    mov r10, 0xF
+    and r10, r9
+    cmp r10, 0xA
+    je CARRY_UP_BCD
+
+    cmp r10, 0xB
+    je CARRY_UP_BCD
+
+    shr r9, 4
+    shl r11, 4
+    or r11, 0xF
 
 LOOP_BACK:
-    cmp r12, 99
+    cmp r12, 100000
     jne CHECK_THREE_MULTIPLE
 
 ; 後処理
@@ -91,16 +104,30 @@ FIN:
     mov rbx, 0                              ; 終了ステータスコード
     int 0x80                                ; システムコール
 
+CARRY_UP_BCD:
+    or r13, r11
+    inc r13
+
+    or r9, 0xF
+    inc r9
+
+    shr r9, 4
+    shl r11, 4
+    or r11, 0xF
+
+    jmp CARRY_UP
 
 SET_BOKE_FMT:
-    mov rsp, boke_message + 0x17
     mov rbp, boke_message
     mov rax, r13
+
+    mov r15, 15
+    add r15, rbp
 
     jmp SET_FORMAT_LOOP
 
 section  .data                  ; データセクションの定義
-    boke_message  db 0xA, "(BOKE)"
-    times 18 db 0x00
-    normal_message db 0xA, ""
-    times 18 db 0x00
+    boke_message  db 0xA, "(BOKE)          "
+    times 20 db 0x00
+    normal_message db 0xA, "                "
+    times 20 db 0x00
