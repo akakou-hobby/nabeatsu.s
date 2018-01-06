@@ -1,10 +1,10 @@
 a.out:
 	gcc -O9 main.c
 
-run: main.c a.out
+run: a.out
 	chmod +x ./a.out && ./a.out
 
-time: main.c a.out
+time: a.out
 	chmod +x ./a.out && time ./a.out
 
 clean:
