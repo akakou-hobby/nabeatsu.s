@@ -27,16 +27,16 @@ int is_bokeru_number(int value) {
 }
 
 int main() {
-  int count;
+  register int count;
 
   /* カウントしていく */
   for (count = 1; count <= MAX; count++) {
     if (is_bokeru_number(count)) {
       // ボケる方の出力
-      printf("      %8d\n", count);
+      printf("%8d      \n", count);
     } else {
       // ボケない方の出力
-      printf("(BOKE)%8d\n", count);
+      printf("%8d(BOKE)\n", count);
     }
   }
 }

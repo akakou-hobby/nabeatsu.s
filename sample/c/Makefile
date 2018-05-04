@@ -1,5 +1,5 @@
 a.out:
-	gcc -O9 main.c
+	gcc -Ofast main.c
 
 run: a.out
 	chmod +x ./a.out && ./a.out
