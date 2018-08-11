@@ -25,20 +25,20 @@ CHECK_THREE_MULTIPLE:
 
     mov r9,  r12                            ; r12(ボケるか判定用カウントレジスタ)をr9（3を含む数値か判定用レジスタ）にコピー
 
+READY_CHECK_IN_THREE:
+    mov r8, r13
+
 ; 3のつく数字化をチェックする
 CHECK_IN_THREE:
-    xor rdx, rdx
-                                            ; r9を10で割る（左から1桁取り出す）
-    mov rax, r9                             ; r9/10 = rax...rdx(取り出した1桁)
-    mov rbx, 10
-    div rbx
+    mov rbx, 0xF                            ; rbxに0xFを格納
+    and rbx, r8                             ; r8と0xFに論理和をかけることで、16進数での1桁分取り出し、rbxに格納
 
-    mov r9, rax                             ; r9を10で割った値をr9に格納
+    shr r8,  4                              ; 16進数におけるBCDでの1桁分右にシフトする。
 
-    cmp rdx, 3                              ; 除算の余りと3を比較する
+    cmp rbx, 3                              ; シフトの余りと3を比較する
     je SET_BOKE_FMT                         ; 余りが0ならprint_abnomalにジャンプする
 
-    cmp rax, 0                              ; 除算のあまりと0を比較し
+    cmp r8, 0                               ; 除算のあまりと0を比較し
     jne CHECK_IN_THREE                      ; 余りが0ならprint_abnomalにジャンプする
 
 ; 普通のフォーマット（数値のみを表示）をrbpに格納する。
@@ -80,7 +80,6 @@ COUNT:
 
     mov r9, r13                             ; r9（繰り上がれてないか確認用レジスタ）にr13（表示用カウントレジスタ）をコピー
     mov r11, 0xF                            ; r11に0xFを格納
-    xor r8, r8
 
 ; 表示用カウントレジスタ(BCD)の桁上がりチェック
 CARRY_UP:
